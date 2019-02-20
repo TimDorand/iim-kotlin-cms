@@ -1,0 +1,26 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
+}
+
+group 'fr.iim.a5.kotlin.timothee.dorand'
+version '1.0-SNAPSHOT'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "io.ktor:ktor-server-netty:1.1.2"
+    implementation "ch.qos.logback:logback-classic:1.2.3"
+    implementation "mysql:mysql-connector-java:8.0.15"
+    implementation "io.ktor:ktor-freemarker:1.1.2"
+
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
