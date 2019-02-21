@@ -22,73 +22,57 @@ data class IndexData(val articles: List<Article>)
 
 
 fun main() {
+    val model = MysqlModel()
+    val articleListControler = ArticleListControler(model)
+    val articleControler = ArticleControler(model)
 
     embeddedServer(Netty, 8080) {
         install(FreeMarker) {
             templateLoader = ClassTemplateLoader(App::class.java.classLoader, "templates")
         }
-        val connectionPool = ConnectionPool("jdbc:mysql://0.0.0.0:3306/homestead", "root", "secret")
+
         routing {
             get("/") {
-                connectionPool.use { connection ->
-                    val stmt = connection.prepareStatement("SELECT * FROM articles")
-                    val results = stmt.executeQuery()
 
-                    val articles = ArrayList<Article>()
-                    while(results.next()){
-                        articles.add(Article(results.getInt("id"), results.getString("title")))
+                val content = articleListControler.startFM()
+                call.respond(content)
+
+                /*val articles = model.getArticleList()
+                 val str = buildString {
+                     while (results.next()) {
+                         val id = results.getInt("id")
+                         val title = results.getString("title")
+                         append("<p><a href='/article/$id'>$title</a></p>")
+                     }
+                 }
+
+                // Response FMC
+                //call.respond(FreeMarkerContent("index.ftl",IndexData(articles)))
+
+                // Response HTML
+                call.respondHtml {
+                    head {
+                        title("List des articles")
                     }
-
-                   /* val str = buildString {
-                        while (results.next()) {
-                            val id = results.getInt("id")
-                            val title = results.getString("title")
-                            append("<p><a href='/article/$id'>$title</a></p>")
-                        }
-                    }*/
-
-                    // Response FMC
-                    call.respond(FreeMarkerContent("index.ftl",IndexData(articles)))
-
-                    // Response HTML
-                    /*call.respondHtml{
-                        head{
-                            title("List des articles")
-                        }
-                        body{
-                            articles.forEach{
-                                p{
-                                    a(href="/articcle/${it.id}") {
-                                        +it.title
-                                    }
+                    body {
+                        articles.forEach {
+                            p {
+                                a(href = "/articles/${it.id}") {
+                                    +it.title
                                 }
                             }
                         }
-                    }*/
-
-                    // Response Text
-                    //call.respondText(str, ContentType.Text.Html)
+                    }
                 }
+
+                // Response Text
+                //call.respondText(str, ContentType.Text.Html)
+                */
             }
             get("/articles/{id}") {
-                connectionPool.use { connection ->
-
-                    val stmt = connection.prepareStatement("SELECT * FROM articles WHERE id = ?")
-                    stmt.setString(1, call.parameters["id"])
-                    val results = stmt.executeQuery()
-                    val found = results.next()
-                    if (found) {
-                        val article = Article(
-                                results.getInt("id"),
-                                results.getString("title"),
-                                results.getString("text")
-                                )
-                        //call.respondText("<h1>$title</h1><p>$text</p>", ContentType.Text.Html)
-                        call.respond(FreeMarkerContent("article.ftl", mapOf("article" to article)))
-
-                    }
-                    call.respond(HttpStatusCode.NotFound)
-                }
+                val id = call.parameters["id"]!!.toInt()
+                val content = articleControler.startFM(id)
+                call.respond(content)
             }
         }
     }.start(true)
