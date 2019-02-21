@@ -35,6 +35,10 @@ fun main() {
                     val results = stmt.executeQuery()
 
                     val articles = ArrayList<Article>()
+                    while(results.next()){
+                        articles.add(Article(results.getInt("id"), results.getString("title")))
+                    }
+
                    /* val str = buildString {
                         while (results.next()) {
                             val id = results.getInt("id")
@@ -42,9 +46,12 @@ fun main() {
                             append("<p><a href='/article/$id'>$title</a></p>")
                         }
                     }*/
-                    // call.respond(FreeMarkerContent("index.ftl",IndexData(articles))
 
-                    call.respondHtml{
+                    // Response FMC
+                    call.respond(FreeMarkerContent("index.ftl",IndexData(articles)))
+
+                    // Response HTML
+                    /*call.respondHtml{
                         head{
                             title("List des articles")
                         }
@@ -57,11 +64,13 @@ fun main() {
                                 }
                             }
                         }
-                    }
+                    }*/
+
+                    // Response Text
                     //call.respondText(str, ContentType.Text.Html)
                 }
             }
-            get("/article/{id}") {
+            get("/articles/{id}") {
                 connectionPool.use { connection ->
 
                     val stmt = connection.prepareStatement("SELECT * FROM articles WHERE id = ?")

@@ -6,6 +6,7 @@
     <title>| Kweet</title>
 </head>
 <body>
-<h1>${results.getString('title')}</h1>
+<h1>${article.title}</h1>
+<h1>${article.text}</h1>
 </body>
 </html>
