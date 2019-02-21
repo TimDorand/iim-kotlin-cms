@@ -22,9 +22,7 @@ class MysqlModel {
     }
 
     fun getArticle(id: Int): Article? {
-
         connectionPool.use { connection ->
-
             val stmt = connection.prepareStatement("SELECT * FROM articles WHERE id = ?")
             stmt.setInt(1, id)
             val results = stmt.executeQuery()
@@ -35,11 +33,8 @@ class MysqlModel {
                     results.getString("title"),
                     results.getString("text")
                 )
-                //call.respondText("<h1>$title</h1><p>$text</p>", ContentType.Text.Html)
-                //call.respond(FreeMarkerContent("article.ftl", mapOf("article" to article)))
             }
         }
             return null
-            //call.respond(HttpStatusCode.NotFound)
     }
 }

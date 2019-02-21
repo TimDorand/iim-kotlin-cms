@@ -33,7 +33,6 @@ fun main() {
 
         routing {
             get("/") {
-
                 val content = articleListControler.startFM()
                 call.respond(content)
 

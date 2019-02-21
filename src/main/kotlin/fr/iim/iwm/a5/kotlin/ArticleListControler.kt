@@ -8,7 +8,7 @@ class ArticleListControler(private val model: MysqlModel) {
     // FreeMaker
     fun startFM(): Any {
         val articles = model.getArticleList()
-        return FreeMarkerContent("index.ftl", articles)
+        return FreeMarkerContent("index.ftl", mapOf("articles" to articles))
     }
 
     // html

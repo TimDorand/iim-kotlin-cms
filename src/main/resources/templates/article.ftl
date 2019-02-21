@@ -7,6 +7,6 @@
 </head>
 <body>
 <h1>${article.title}</h1>
-<h1>${article.text}</h1>
+<p>${article.text}</p>
 </body>
 </html>
