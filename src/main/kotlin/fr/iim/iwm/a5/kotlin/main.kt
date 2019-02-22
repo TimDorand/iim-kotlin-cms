@@ -1,6 +1,7 @@
 package fr.iim.iwm.a5.kotlin
 
 import freemarker.cache.ClassTemplateLoader
+import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.freemarker.FreeMarker
@@ -18,61 +19,39 @@ import kotlinx.html.*
 
 class App
 
+data class Article(val id: Int, val title: String, val text: String? = null)
 data class IndexData(val articles: List<Article>)
 
+fun Application.cmsApp(
+    articleListController: ArticleListController,
+    articleController: ArticleControllerImpl
+) {
+    install(FreeMarker) {
+        templateLoader = ClassTemplateLoader(App::class.java.classLoader, "templates")
+    }
+
+    routing {
+        get("/") {
+            val content = articleListController.startHD()
+            call.respond(content)
+        }
+
+        get("/article/{id}") {
+            val id = call.parameters["id"]!!.toInt()
+            val content = articleController.startHD(id)
+            call.respond(content)
+        }
+    }
+}
 
 fun main() {
-    val model = MysqlModel()
-    val articleListControler = ArticleListControler(model)
-    val articleControler = ArticleControler(model)
+    val model = MysqlModel("jdbc:mysql://0.0.0.0:3306/homestead", "root", "secret")
 
-    embeddedServer(Netty, 8080) {
-        install(FreeMarker) {
-            templateLoader = ClassTemplateLoader(App::class.java.classLoader, "templates")
-        }
+    val articleListControler = ArticleListControllerImpl(model)
+    val articleControler = ArticleControllerImpl(model)
 
-        routing {
-            get("/") {
-                val content = articleListControler.startFM()
-                call.respond(content)
 
-                /*val articles = model.getArticleList()
-                 val str = buildString {
-                     while (results.next()) {
-                         val id = results.getInt("id")
-                         val title = results.getString("title")
-                         append("<p><a href='/article/$id'>$title</a></p>")
-                     }
-                 }
-
-                // Response FMC
-                //call.respond(FreeMarkerContent("index.ftl",IndexData(articles)))
-
-                // Response HTML
-                call.respondHtml {
-                    head {
-                        title("List des articles")
-                    }
-                    body {
-                        articles.forEach {
-                            p {
-                                a(href = "/articles/${it.id}") {
-                                    +it.title
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Response Text
-                //call.respondText(str, ContentType.Text.Html)
-                */
-            }
-            get("/articles/{id}") {
-                val id = call.parameters["id"]!!.toInt()
-                val content = articleControler.startFM(id)
-                call.respond(content)
-            }
-        }
+    embeddedServer(Netty, 8888) {
+        cmsApp(articleListControler, articleControler)
     }.start(true)
 }

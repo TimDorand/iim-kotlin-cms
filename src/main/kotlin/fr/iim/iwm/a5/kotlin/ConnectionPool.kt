@@ -5,7 +5,7 @@ import java.sql.DriverManager
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.ConcurrentLinkedQueue
 
-class ConnectionPool(val url: String, val user: String, val password: String) {
+class ConnectionPool(val url: String?, val user: String?, val password: String?) {
     val list = ConcurrentLinkedQueue<Connection>()
 
     fun getConnection(): Connection {

@@ -3,12 +3,12 @@ package fr.iim.iwm.a5.kotlin
 import io.ktor.freemarker.FreeMarkerContent
 import io.ktor.http.HttpStatusCode
 
-class MysqlModel {
+class MysqlModel(val url: String, val user: String?, val password: String?): Model {
 
-    val connectionPool = ConnectionPool("jdbc:mysql://0.0.0.0:3306/homestead", "root", "secret")
+    val connectionPool = ConnectionPool(url, user, password)
 
 
-    fun getArticleList(): List<Article> {
+    override fun getArticleList(): List<Article> {
         val articles = ArrayList<Article>()
         connectionPool.use { connection ->
             val stmt = connection.prepareStatement("SELECT * FROM articles")
@@ -21,7 +21,7 @@ class MysqlModel {
         return articles
     }
 
-    fun getArticle(id: Int): Article? {
+    override fun getArticle(id: Int): Article? {
         connectionPool.use { connection ->
             val stmt = connection.prepareStatement("SELECT * FROM articles WHERE id = ?")
             stmt.setInt(1, id)
@@ -35,6 +35,6 @@ class MysqlModel {
                 )
             }
         }
-            return null
+        return null
     }
 }
