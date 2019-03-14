@@ -1,5 +1,6 @@
 package fr.iim.iwm.a5.kotlin
 
+import fr.iim.iwm.a5.kotlin.templates.admin.adminIndexTemplate
 import fr.iim.iwm.a5.kotlin.templates.indexTemplate
 import io.ktor.freemarker.FreeMarkerContent
 import io.ktor.html.HtmlContent
@@ -19,6 +20,13 @@ class ArticleListControllerImpl(private val model: Model) : ArticleListControlle
         val articles = model.getArticleList()
         if (articles !== null) {
             return HtmlContent { indexTemplate(articles) }
+        }
+        return HttpStatusCode.NotFound
+    }
+    override fun startAdminHD(): Any {
+        val articles = model.getArticleList()
+        if (articles !== null) {
+            return HtmlContent { adminIndexTemplate(articles) }
         }
         return HttpStatusCode.NotFound
     }

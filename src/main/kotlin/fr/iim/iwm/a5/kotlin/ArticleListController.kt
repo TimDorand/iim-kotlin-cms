@@ -4,7 +4,8 @@ import io.ktor.freemarker.FreeMarkerContent
 import io.ktor.html.HtmlContent
 import io.ktor.http.HttpStatusCode
 
-interface ArticleController {
-    fun  startFM(id: Int): Any
-    fun  startHD(id: Int): Any
+interface ArticleListController {
+    fun  startFM(): Any
+    fun  startHD(): Any
+    fun  startAdminHD(): Any
 }

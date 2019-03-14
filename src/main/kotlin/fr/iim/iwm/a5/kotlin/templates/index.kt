@@ -5,16 +5,22 @@ import kotlinx.html.*
 
 fun HTML.indexTemplate(articles: List<Article>) {
     head{
-        title("liste des article")
+        title("Liste des articles")
     }
 
     body {
+        h1{+"Liste des articles"}
         articles.forEach{
-            p {
-                a(href = "/article/${it.id}") {
-                    +it.title
+            ul {
+                li {
+                    a(href = "/article/${it.id}") {
+                        +it.title
+                    }
                 }
             }
+        }
+        footer {
+            a{href="admin"; +"Administration"}
         }
     }
 }
